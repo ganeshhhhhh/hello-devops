@@ -2,17 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB = "yourdockerhub"
-        SONAR_TOKEN = "your_sonar_token"
+        DOCKER_IMAGE = "ganeshhhhhh/hello-devops:latest"
     }
 
     stages {
-
-        stage('Clone') {
-            steps {
-                git 'https://github.com/ganeshhhhhh/hello-devops.git'
-            }
-        }
 
         stage('Build') {
             steps {
@@ -21,21 +14,29 @@ pipeline {
         }
 
         stage('SonarQube') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token')
+            }
             steps {
-                sh "mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN"
+                sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $DOCKERHUB/hello-devops:latest .'
+                sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
 
         stage('Docker Push') {
+            environment {
+                DOCKER_CREDS = credentials('dockerhub-creds')
+            }
             steps {
-                sh 'docker login -u yourdockerhub -p yourpassword'
-                sh 'docker push $DOCKERHUB/hello-devops:latest'
+                sh '''
+                echo $DOCKER_CREDS_PSW | docker login -u $DOCKER_CREDS_USR --password-stdin
+                docker push $DOCKER_IMAGE
+                '''
             }
         }
     }
