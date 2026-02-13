@@ -10,7 +10,7 @@ pipeline {
 
         stage('Clone') {
             steps {
-                git 'https://github.com/YOUR_USERNAME/hello-devops.git'
+                git 'https://github.com/ganeshhhhhh/hello-devops.git'
             }
         }
 
