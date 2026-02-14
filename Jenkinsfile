@@ -7,6 +7,14 @@ pipeline {
 
     stages {
 
+        stage('Clone') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'git-cred',
+                    url: 'https://github.com/ganeshhhhhh/hello-devops.git'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'mvn clean package'
